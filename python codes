@@ -1,0 +1,301 @@
+1.	Two Sum
+class Solution(object):
+    def twoSum(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[int]
+        """
+        num_to_index = {}
+        
+        for i, num in enumerate(nums):
+            complement = target - num
+            if complement in num_to_index:
+                # Found the pair
+                return [num_to_index[complement], i]
+            # Store the current number with its index
+            num_to_index[num] = i
+        
+        # This line is technically unreachable because the problem guarantees a solution
+        return []
+2.	Add Two Numbers:
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution(object):
+    def addTwoNumbers(self, l1, l2):
+        """
+        :type l1: Optional[ListNode]
+        :type l2: Optional[ListNode]
+        :rtype: Optional[ListNode]
+        """
+        dummy = ListNode(0)
+        current = dummy
+        carry = 0
+        
+        # Loop while either list has nodes or there is a carry
+        while l1 or l2 or carry:
+            val1 = l1.val if l1 else 0
+            val2 = l2.val if l2 else 0
+            
+            # Compute sum and carry
+            total = val1 + val2 + carry
+            carry = total // 10
+            new_digit = total % 10
+            
+            # Append new node
+            current.next = ListNode(new_digit)
+            current = current.next
+            
+            # Move to next nodes
+            if l1:
+                l1 = l1.next
+            if l2:
+                l2 = l2.next
+        
+        return dummy.next
+
+3. Longest Substring Without Repeating Characters
+class Solution(object):
+    def lengthOfLongestSubstring(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        char_index = {}  # Stores the last index of each character
+        left = 0         # Left pointer of the window
+        max_length = 0   # Max length of substring without duplicates
+        
+        for right, char in enumerate(s):
+            # If character is in the window, move left pointer
+            if char in char_index and char_index[char] >= left:
+                left = char_index[char] + 1
+            
+            # Update the last seen index of the character
+            char_index[char] = right
+            
+            # Update max length
+            max_length = max(max_length, right - left + 1)
+        
+        return max_length
+
+
+
+4. Median of Two Sorted Arrays
+class Solution(object):
+    def findMedianSortedArrays(self, nums1, nums2):
+        """
+        :type nums1: List[int]
+        :type nums2: List[int]
+        :rtype: float
+        """
+        if len(nums1) > len(nums2):
+            nums1, nums2 = nums2, nums1
+        
+        m, n = len(nums1), len(nums2)
+        left, right = 0, m
+        
+        while left <= right:
+            i = (left + right) // 2
+            j = (m + n + 1) // 2 - i
+            
+            # Edge values
+            max_left_nums1 = float('-inf') if i == 0 else nums1[i-1]
+            min_right_nums1 = float('inf') if i == m else nums1[i]
+            
+            max_left_nums2 = float('-inf') if j == 0 else nums2[j-1]
+            min_right_nums2 = float('inf') if j == n else nums2[j]
+            
+            # Check if partition is correct
+            if max_left_nums1 <= min_right_nums2 and max_left_nums2 <= min_right_nums1:
+                # If total length is even
+                if (m + n) % 2 == 0:
+                    return (max(max_left_nums1, max_left_nums2) + min(min_right_nums1, min_right_nums2)) / 2.0
+                else:
+                    return float(max(max_left_nums1, max_left_nums2))
+            elif max_left_nums1 > min_right_nums2:
+                right = i - 1
+            else:
+                left = i + 1
+
+
+5. Longest Palindromic Substring
+class Solution(object):
+    def longestPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        if not s or len(s) == 1:
+            return s
+
+        start, end = 0, 0
+
+        # Helper function to expand from the center
+        def expandAroundCenter(left, right):
+            while left >= 0 and right < len(s) and s[left] == s[right]:
+                left -= 1
+                right += 1
+            # Return the palindrome substring boundaries
+            return left + 1, right - 1
+
+        for i in range(len(s)):
+            # Odd length palindrome
+            l1, r1 = expandAroundCenter(i, i)
+            # Even length palindrome
+            l2, r2 = expandAroundCenter(i, i + 1)
+
+            # Choose the longer one
+            if r1 - l1 > end - start:
+                start, end = l1, r1
+            if r2 - l2 > end - start:
+                start, end = l2, r2
+
+        return s[start:end + 1]
+
+
+6. Zigzag Conversion
+class Solution(object):
+    def convert(self, s, numRows):
+        """
+        :type s: str
+        :type numRows: int
+        :rtype: str
+        """
+        
+        if numRows == 1 or numRows >= len(s):
+            return s
+
+        # Create a list for each row
+        rows = [''] * numRows
+        cur_row = 0
+        going_down = False
+
+        # Traverse through the string
+        for char in s:
+            rows[cur_row] += char
+            # Change direction when reaching top or bottom
+            if cur_row == 0 or cur_row == numRows - 1:
+                going_down = not going_down
+            cur_row += 1 if going_down else -1
+
+        # Join all rows to form final string
+        return ''.join(rows);
+
+
+7. Reverse Integer
+class Solution(object):
+    def reverse(self, x):
+        """
+        :type x: int
+        :rtype: int
+        """
+        INT_MAX = 2**31 - 1
+        INT_MIN = -2**31
+
+        result = 0
+        negative = x < 0
+        x = abs(x)
+
+        while x != 0:
+            pop = x % 10
+            x //= 10
+
+            # Check for overflow before multiplying by 10
+            if result > (INT_MAX - pop) // 10:
+                return 0
+
+            result = result * 10 + pop
+
+        return -result if negative else result
+
+
+8. String to Integer (atoi)
+class Solution(object):
+    def myAtoi(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        INT_MAX = 2**31 - 1
+        INT_MIN = -2**31
+
+        i = 0
+        n = len(s)
+        # Skip leading whitespaces
+        while i < n and s[i] == ' ':
+            i += 1
+
+        if i == n:
+            return 0
+
+        # Check sign
+        sign = 1
+        if s[i] == '+':
+            i += 1
+        elif s[i] == '-':
+            sign = -1
+            i += 1
+
+        result = 0
+        # Convert digits to integer
+        while i < n and s[i].isdigit():
+            digit = int(s[i])
+            
+            # Check overflow
+            if result > (INT_MAX - digit) // 10:
+                return INT_MAX if sign == 1 else INT_MIN
+
+            result = result * 10 + digit
+            i += 1
+
+        return sign * result
+
+
+9. Palindrome Number
+class Solution(object):
+    def isPalindrome(self, x):
+        """
+        :type x: int
+        :rtype: bool
+        """
+        if x < 0:
+            return False
+        
+        # Convert the number to string
+        x_str = str(x)
+        
+        # Check if the string is equal to its reverse
+        return x_str == x_str[::-1]
+
+
+10. Regular Expression Matching
+class Solution(object):
+    def isMatch(self, s, p):
+        """
+        :type s: str
+        :type p: str
+        :rtype: bool
+        """
+        m, n = len(s), len(p)
+        dp = [[False] * (n + 1) for _ in range(m + 1)]
+        
+        # Empty string matches empty pattern
+        dp[0][0] = True
+        
+        # Handle patterns like a*, a*b*, a*b*c* matching empty string
+        for j in range(2, n + 1):
+            if p[j - 1] == '*':
+                dp[0][j] = dp[0][j - 2]
+        
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                if p[j - 1] == '.' or p[j - 1] == s[i - 1]:
+                    dp[i][j] = dp[i - 1][j - 1]
+                elif p[j - 1] == '*':
+                    # '*' can mean zero of previous character or more
+                    dp[i][j] = dp[i][j - 2] or (dp[i - 1][j] and (p[j - 2] == s[i - 1] or p[j - 2] == '.'))
+        
+        return dp[m][n]
