@@ -1,0 +1,41 @@
+def maximumSumOfHeights(heights):
+    n = len(heights)
+    
+    # Step 1: left contribution
+    left = [0] * n
+    stack = []
+    total = 0
+    
+    for i in range(n):
+        count = 1
+        while stack and stack[-1][0] > heights[i]:
+            h, c = stack.pop()
+            total -= h * c
+            count += c
+        
+        stack.append((heights[i], count))
+        total += heights[i] * count
+        left[i] = total
+    
+    # Step 2: right contribution
+    right = [0] * n
+    stack = []
+    total = 0
+    
+    for i in range(n - 1, -1, -1):
+        count = 1
+        while stack and stack[-1][0] > heights[i]:
+            h, c = stack.pop()
+            total -= h * c
+            count += c
+        
+        stack.append((heights[i], count))
+        total += heights[i] * count
+        right[i] = total
+    
+    # Step 3: combine
+    ans = 0
+    for i in range(n):
+        ans = max(ans, left[i] + right[i] - heights[i])
+    
+    return ans
