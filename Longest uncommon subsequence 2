@@ -1,0 +1,27 @@
+def findLUSlength(strs):
+    
+    # helper function to check subsequence
+    def isSubsequence(a, b):
+        i = 0
+        for char in b:
+            if i < len(a) and a[i] == char:
+                i += 1
+        return i == len(a)
+    
+    # sort by length descending
+    strs.sort(key=len, reverse=True)
+    
+    for i in range(len(strs)):
+        found = False
+        
+        for j in range(len(strs)):
+            if i == j:
+                continue
+            if isSubsequence(strs[i], strs[j]):
+                found = True
+                break
+        
+        if not found:
+            return len(strs[i])
+    
+    return -1
