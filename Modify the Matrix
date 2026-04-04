@@ -1,0 +1,25 @@
+ 
+from typing import List 
+ 
+class Solution: 
+    def modifiedMatrix(self, matrix: List[List[int]]) -> List[List[int]]: 
+        m, n = len(matrix), len(matrix[0]) 
+         
+        # Find column maximums 
+        col_max = [0] * n 
+        for j in range(n): 
+            max_val = -1 
+            for i in range(m): 
+                max_val = max(max_val, matrix[i][j]) 
+            col_max[j] = max_val 
+         
+        # Create answer matrix (copy of original) 
+        answer = [row[:] for row in matrix] 
+         
+        # Replace -1 with column maximum 
+        for i in range(m): 
+            for j in range(n): 
+                if answer[i][j] == -1: 
+                    answer[i][j] = col_max[j] 
+         
+        return answer
