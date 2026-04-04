@@ -1,0 +1,18 @@
+ 
+class Solution: 
+    def checkXMatrix(self, grid: List[List[int]]) -> bool: 
+        n = len(grid) 
+         
+        for i in range(n): 
+            for j in range(n): 
+                # Check if cell is on either diagonal 
+                if i == j or i + j == n - 1: 
+                    # On diagonal → must be non-zero 
+                    if grid[i][j] == 0: 
+                        return False 
+                else: 
+                    # Off diagonal → must be zero 
+                    if grid[i][j] != 0: 
+                        return False 
+         
+        return True
