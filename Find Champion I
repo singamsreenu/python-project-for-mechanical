@@ -1,0 +1,19 @@
+ 
+from typing import List 
+ 
+class Solution: 
+    def findChampion(self, grid: List[List[int]]) -> int: 
+        n = len(grid) 
+         
+        for i in range(n): 
+            # Check column i 
+            is_champion = True 
+            for j in range(n): 
+                if i != j and grid[j][i] == 1: 
+                    # Team j is stronger than team i 
+                    is_champion = False 
+                    break 
+            if is_champion: 
+                return i 
+         
+        return -1  # Should never reach here given constraints 
